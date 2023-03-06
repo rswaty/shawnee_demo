@@ -1,0 +1,97 @@
+---
+title: "`r params$MAP_UNIT_S` Report"
+author: "Randy Swaty"
+date: "2023-02-20"
+output: html_document
+params:
+  MAP_UNIT_S: "223Dh01"
+---
+
+
+
+```{r setup, message=FALSE, warning=FALSE, include=FALSE}
+library(tidyverse)
+library(stringr)
+library(crosstalk)
+library(ggsci)
+library(scales)
+library(plotly)
+
+data <- read.csv("data/shawn_combine.csv") %>%
+  mutate(ACRES = Count*0.222)
+
+```
+
+
+## Top 10 Biophysical Settings 
+
+```{r bps chart, message=FALSE, warning=FALSE, echo=FALSE, fig.width=10, fig.height=10}
+bpsname <- data %>%
+  filter(MAP_UNIT_S == params$MAP_UNIT_S) %>%
+  group_by(BPS_NAME) %>%
+  summarize(ACRES = sum(ACRES)) %>%
+  arrange(desc(ACRES)) %>%
+  top_n(n = 10, wt = ACRES)
+
+# plot
+bpsChart <- 
+  ggplot(data = bpsname, aes(x = BPS_NAME, y = ACRES)) +
+  geom_bar(stat = "identity") +
+  labs(
+    subtitle = "Represents dominant vegetation systems pre-European colonization",
+    caption = "Data from landfire.gov.",
+    x = "",
+    y = "Acres") +
+  scale_x_discrete(limits = rev(bpsname$BPS_NAME),
+                   labels = function(x) str_wrap(x, width = 18)) +
+  scale_y_continuous(labels = comma) +
+  coord_flip() +
+  theme_bw(base_size = 14)
+
+
+bpsChart
+
+
+```
+
+
+
+
+
+
+## Top 10 Existing Vegetation Types
+
+
+```{r evt chart, message=FALSE, warning=FALSE, echo=FALSE, fig.width=10, fig.height=10}
+evtname <- data %>%
+  filter(MAP_UNIT_S == params$MAP_UNIT_S) %>%
+  group_by(EVT_NAME) %>%
+  summarize(ACRES = sum(ACRES)) %>%
+  arrange(desc(ACRES)) %>%
+  top_n(n = 10, wt = ACRES)
+
+# plot
+evtChart <- 
+  ggplot(data = evtname, aes(x = EVT_NAME, y = ACRES)) +
+  geom_bar(stat = "identity") +
+  labs(
+    subtitle = "Represents dominant vegetation systems ~2020",
+    caption = "Data from landfire.gov.",
+    x = "",
+    y = "Acres") +
+  scale_x_discrete(limits = rev(evtname$EVT_NAME),
+                   labels = function(x) str_wrap(x, width = 18)) +
+  scale_y_continuous(labels = comma) +
+  coord_flip() +
+  theme_bw(base_size = 14)
+
+
+evtChart
+
+
+```
+
+
+
+
+

@@ -1,0 +1,84 @@
+---
+title: "Click on LTA for report"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(leaflet)
+library(sf)
+library(tidyverse)
+```
+
+
+```{r data prep, message=FALSE, warning=FALSE, include=FALSE}
+#  read shape
+shp <- st_read("data/shawnee_ltas.shp") %>% 
+  st_transform(crs = 4326) %>%
+  arrange(MAP_UNIT_S)
+
+paths <- list.files('output', pattern = '.html', all.files = TRUE, full.names = TRUE) %>%
+  sort()
+  
+
+shp <- cbind(shp, paths)
+```
+
+The map
+========================================================
+
+##  Need something here
+
+<font size="6"> Demo reports for LTAs of the Shawnee National Forest </font>
+
+```{r clickable map, echo=FALSE, message=FALSE, warning=FALSE, fig.width=16, fig.height=10}
+
+
+leaflet(shp) %>%
+  addProviderTiles(providers$CartoDB.Positron) %>%
+  addPolygons(color = "#404241", weight = 1, smoothFactor = 0.5,
+    opacity = 1.0, fillOpacity = 0.5,
+    fillColor = "#0b631a",
+    highlightOptions = highlightOptions(color = "white", weight = 3,
+      bringToFront = TRUE),
+    popup = paste0( "LTA:"
+                 , shp$MAP_UNIT_S
+                 , "<br>"
+                 , "<a href='"
+                 , shp$paths
+                 , "' target='_blank'>"
+                 , "Click Here</a>"
+               )
+    
+    
+    
+    
+    
+    )
+
+
+```
+
+
+
+Column {.sidebar}
+-----------------------------------------------------------------------
+<b><font  size="4em" color="#000000">Understanding LTAs with LANDFIRE data</font></b>  
+
+
+In hopes of shutting Nowacki up I mocked up this quick 'dashboard'.  When you click on an LTA you get a very brief 'report' that simply has a couple charts, one of LANDFIRE Biophysical Settings (historical vegetation) and one for Existing Vegetation Type.  There are many many options for information we could present.  I just had a little time and thought I'd try this.
+
+**This is not what Jason asked for.  I am working on that.**
+
+<br>
+
+<br>
+
+![](nowacki_boys.JPG){width=100%}
+
+Nowacki boring my boys.
+
+
