@@ -34,7 +34,7 @@ The map
 
 <font size="6"> Demo reports for LTAs of the Shawnee National Forest </font>
 
-```{r clickable map, echo=FALSE, message=FALSE, warning=FALSE, fig.width=16, fig.height=10}
+```{r clickable map, echo=FALSE, message=FALSE, warning=FALSE, fig.width=12, fig.height=10}
 
 
 leaflet(shp) %>%
